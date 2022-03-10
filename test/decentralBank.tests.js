@@ -1,5 +1,3 @@
-const { default: Web3 } = require('web3');
-
 const Tether = artifacts.require('Tether');
 const Rwd = artifacts.require('Rwd');
 const DecentralBank = artifacts.require('DecentralBank');
@@ -56,4 +54,49 @@ contract('DecentralBank', ([owner, customer]) => {
             assert.equal(balance, tokens('1000000'));
         });
     });
+
+    describe('Yield Farming', async () => {
+        it('rewards token for staking', async () => {
+            let result;
+
+            result = await tether.balanceOf(customer);
+
+            assert.equal(result.toString(), tokens('1000000'), 'customer mock wallet balance before staking');
+
+            await tether.approve(decentralBank.address, tokens('100'), {from: customer});
+            await decentralBank.depositTokens(tokens('100'), { from: customer });
+
+            // result = await tether.balanceOf(customer);
+            // assert.equal(result.toString(), tokens('0'), 'customer mock wallet balance after staking');
+
+            result = await tether.balanceOf(decentralBank.address);
+            assert.equal(result.toString(), tokens('100'), 'decentral bank wallet balance after staking');
+
+            //Checking isStaking status for customer
+            result = await decentralBank.isStaking(customer);
+            assert.equal(result.toString(), 'true', 'Customer is staking status after staking');
+
+            // Issue TOkens
+            await decentralBank.issueTokens({from: owner})
+
+            // Ensure Only owner issue tokens
+            await decentralBank.issueTokens({from: customer}).should.be.rejected;
+
+            // Unstake Tokens
+            await decentralBank.unstakeTokens({from: customer});
+
+            // Check Unstakin Balances
+            result = await tether.balanceOf(customer);
+            assert.equal(result.toString(), tokens('1000000'), 'customer mock wallet balance after unstaking');
+
+            result = await decentralBank.isStaking(customer);
+            assert.equal(result.toString(), 'false', 'Customer is staking status after unstaking');
+
+            result = await tether.balanceOf(decentralBank.address);
+            assert.equal(result.toString(), tokens('0'), 'decentral bank wallet balance after unstaking');
+
+        });
+    });
+
+
 });
