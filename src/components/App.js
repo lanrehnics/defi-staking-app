@@ -106,8 +106,7 @@ class App extends Component {
     }
 
     render() {
-        let content
-        {
+        let content;
             content = this.state.loading ? <p id='loader' className='text-center' style={{ margin: '30px', color:'white' }} >LOADING PLEASE...</p> :
                 <Main
                     tetherBalance={this.state.tetherBalance}
@@ -115,8 +114,7 @@ class App extends Component {
                     stakingBalance={this.state.stakingBalance}
                     stakeTokens={this.state.stakeTokens}
                     unstakeTokens={this.state.unstakeTokens}
-                />
-        };
+                />;
         return (
             <div className='App' style={{ position: 'relative' }}>
 
