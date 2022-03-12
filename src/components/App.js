@@ -5,6 +5,7 @@ import Web3 from 'web3';
 import Tether from '../truffle_abis/Tether.json';
 import Rwd from '../truffle_abis/Rwd.json';
 import DecentralBank from '../truffle_abis/DecentralBank.json';
+import ParticleSettings from './ParticleSettings';
 
 
 
@@ -72,19 +73,19 @@ class App extends Component {
     }
 
     stakeTokens = (amount) => {
-        this.setState({loading: true});
-        this.state.tether.methods.approve(this.state.decentralBank._address, amount).send({from: this.state.account}).on('transactionHash', (hash)=> {});
-        this.state.decentralBank.methods.depositTokens(amount).send({from: this.state.account}).on('transactionHash', (hash) => {
+        this.setState({ loading: true });
+        this.state.tether.methods.approve(this.state.decentralBank._address, amount).send({ from: this.state.account }).on('transactionHash', (hash) => { });
+        this.state.decentralBank.methods.depositTokens(amount).send({ from: this.state.account }).on('transactionHash', (hash) => {
             console.log(hash);
-            this.setState({loading: false});
+            this.setState({ loading: false });
         });
     }
 
     unstakeTokens = () => {
-        this.setState({loading: true});
-        this.state.decentralBank.methods.unstakeTokens().send({from: this.state.account}).on('transactionHash', (hash) => {
+        this.setState({ loading: true });
+        this.state.decentralBank.methods.unstakeTokens().send({ from: this.state.account }).on('transactionHash', (hash) => {
             console.log(hash);
-            this.setState({loading: false});
+            this.setState({ loading: false });
         });
     }
 
@@ -99,15 +100,15 @@ class App extends Component {
             rwdBalance: '0',
             stakingBalance: '0',
             loading: true,
-            stakeTokens : this.stakeTokens,
-            unstakeTokens : this.unstakeTokens
+            stakeTokens: this.stakeTokens,
+            unstakeTokens: this.unstakeTokens
         }
     }
 
     render() {
         let content
         {
-            content = this.state.loading ? <p id='loader' className='text-center' style={{ margin: '30px' }} >LOADING PLEASE...</p> :
+            content = this.state.loading ? <p id='loader' className='text-center' style={{ margin: '30px', color:'white' }} >LOADING PLEASE...</p> :
                 <Main
                     tetherBalance={this.state.tetherBalance}
                     rwdBalance={this.state.rwdBalance}
@@ -117,17 +118,21 @@ class App extends Component {
                 />
         };
         return (
-            <div>
-                <div>
-                    <NavBar account={this.state.account} />
-                    <div className='container-fluid mt-5'>
-                        <div className='row'>
-                            <main role='main' className='col-lg-12 ml-auto mr-auto' style={{ maxWidth: '600px', minHeight: '100vm' }} >
-                                <div>
-                                    {content}
-                                </div>
-                            </main>
-                        </div>
+            <div className='App' style={{ position: 'relative' }}>
+
+
+                <div style={{position: 'absolute'}}>
+                    <ParticleSettings />
+                </div>
+
+                <NavBar account={this.state.account} />
+                <div className='container-fluid mt-5'>
+                    <div className='row'>
+                        <main role='main' className='col-lg-12 ml-auto mr-auto' style={{ maxWidth: '600px', minHeight: '100vm' }} >
+                            <div>
+                                {content}
+                            </div>
+                        </main>
                     </div>
                 </div>
             </div>
